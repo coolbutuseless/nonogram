@@ -33,12 +33,13 @@ Nonograms
 
 Nonograms are picture logic puzzles in which cells in a grid must be colored or left blank according to numbers at the side of the grid to reveal a hidden picture.
 
-Nonograms are also known by many other names, including Paint by Numbers, Griddlers, Pic-a-Pix, Picross, PrismaPixels, Pixel Puzzles, Crucipixel, Edel, FigurePic, Hanjie, HeroGlyphix, Illust-Logic, Japanese Crosswords, Japanese Puzzles, Kare Karala!, Logic Art, Logic Square, Logicolor, Logik-Puzzles, Logimage, Oekaki Logic, Oekaki-Mate, Paint Logic, Picture Logic, Tsunamii, Paint by Sudoku and Binary Coloring Books.
-
-
 <div style="float: left;">
   <img src="figures/example-blank.png" width="45%"><img src="figures/example-solved.png" width="45%">
 </div>
+
+
+The `nonogram` package contains a solver and methods for plotting and manipulating
+nonogram puzzles.
 
 
 Installation
