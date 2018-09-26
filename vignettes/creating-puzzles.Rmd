@@ -12,7 +12,7 @@ vignette: >
 ```{r setup, include = FALSE}
 suppressPackageStartupMessages({
   library(dplyr)
-  library(raster)
+  library(magick)
   
   library(nonogram)
 })
@@ -50,9 +50,17 @@ create_puzzle_plot(puzzle_string, solution)
 
 
 ```{r}
-im <- png::readPNG("figures/Rlogo-bw.png")
-plot(as.raster(im), interpolate=FALSE)
+library(magick)
+im <- magick::image_read(system.file("img", "Rlogo.jpg", package="jpeg"))
+
+
+im <- im %>% 
+  image_quantize(max=2, colorspace = 'gray', dither=TRUE) %>%
+  image_scale(geometry = geometry_size_pixels(width=25, height=20, preserve_aspect=FALSE)) 
+  
+im
 ```
+
 
 
 ## From the image, create an integer matrix with just zeros and ones
@@ -60,10 +68,9 @@ plot(as.raster(im), interpolate=FALSE)
 
 ```{r}
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# Manipulating the image data to select just the 'Green' plane from the
-# RGB image, and then thresholding it and inverting it.
+# Manipulating the image data to to matrix and then threshold, invert + tranpose
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-mat <- 1L - (im[,,2] > 0)
+mat <- t(1L - 1L * (im[[1]][1,,] > 180))
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # nonogram has a method for plotting a matrix in a standard way
