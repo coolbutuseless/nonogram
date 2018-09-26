@@ -4,8 +4,8 @@
 \alias{create_matrix_plot}
 \title{Create a ggplot of a matrix}
 \usage{
-create_matrix_plot(mat, title = NULL, tile_size = 1, col_spacing = 0,
-  row_spacing = 0)
+create_matrix_plot(mat, title = NULL, tile_size = 1, base_size = 11,
+  col_spacing = 0, row_spacing = 0)
 }
 \arguments{
 \item{mat}{numeric matrix with just 0/1 values}
@@ -13,6 +13,8 @@ create_matrix_plot(mat, title = NULL, tile_size = 1, col_spacing = 0,
 \item{title}{plot title. default: NULL}
 
 \item{tile_size}{size of tiles. Range 0-1. Default: 0.96}
+
+\item{base_size}{base size for ggplot theme. default 11}
 
 \item{col_spacing}{fractional extra spacing between columns}
 

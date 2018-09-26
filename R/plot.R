@@ -10,6 +10,7 @@ globalVariables(c('x', 'y', 'value'))
 #' @param solution_matrix solution matrix. optional
 #' @param show_clues whether or not to show the clues along the axes. default: TRUE
 #' @param title plot title. default: NULL
+#' @param base_size base size for ggplot theme. default 11
 #' @param col_spacing fractional extra spacing between columns
 #' @param row_spacing fractional extra spacing between rows
 #'
@@ -20,7 +21,7 @@ globalVariables(c('x', 'y', 'value'))
 #' @importFrom purrr map_chr
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-create_puzzle_plot <- function(puzzle, solution_matrix=NULL, show_clues=TRUE, title = NULL, col_spacing=0, row_spacing=0) {
+create_puzzle_plot <- function(puzzle, solution_matrix=NULL, show_clues=TRUE, title = NULL, base_size = 11, col_spacing=0, row_spacing=0) {
 
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # Auto-convert to puzzle if it looks like a puzzle string
@@ -59,7 +60,7 @@ create_puzzle_plot <- function(puzzle, solution_matrix=NULL, show_clues=TRUE, ti
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # Create plot of the solution matrix
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  p <- create_matrix_plot(solution_matrix, title=title)
+  p <- create_matrix_plot(solution_matrix, title=title, base_size=base_size)
 
 
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -71,14 +72,13 @@ create_puzzle_plot <- function(puzzle, solution_matrix=NULL, show_clues=TRUE, ti
       scale_y_continuous(breaks = ybreaks, labels = ylabels) +
       theme(
         plot.margin = unit(c(t=0, r=0, b=10, l=0), units='pt'),
-        axis.text.x = element_text(vjust=1),
-        axis.text.y = element_text(hjust=1)
+        axis.text.x = element_text(size=base_size, vjust=1, margin=margin( -9,  0, 0, 0)),
+        axis.text.y = element_text(size=base_size, hjust=1, margin=margin(  0, -6, 0, 0))
       )
   }
 
   p
 }
-
 
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -87,6 +87,7 @@ create_puzzle_plot <- function(puzzle, solution_matrix=NULL, show_clues=TRUE, ti
 #' @param mat numeric matrix with just 0/1 values
 #' @param tile_size size of tiles. Range 0-1. Default: 0.96
 #' @param title plot title. default: NULL
+#' @param base_size base size for ggplot theme. default 11
 #' @param col_spacing fractional extra spacing between columns
 #' @param row_spacing fractional extra spacing between rows
 #'
@@ -95,7 +96,7 @@ create_puzzle_plot <- function(puzzle, solution_matrix=NULL, show_clues=TRUE, ti
 #' @import ggplot2
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-create_matrix_plot <- function(mat, title = NULL, tile_size = 1, col_spacing = 0, row_spacing = 0) {
+create_matrix_plot <- function(mat, title = NULL, tile_size = 1, base_size = 11, col_spacing = 0, row_spacing = 0) {
 
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # pre-calc matrix size for reuse
@@ -120,10 +121,10 @@ create_matrix_plot <- function(mat, title = NULL, tile_size = 1, col_spacing = 0
   ggplot(df) +
     geom_tile(aes(x, y, fill=value, colour=value, size=value), width=tile_size, height=tile_size) +
     coord_equal() +
-    theme_void() +
-    scale_fill_manual (values = c('0'='grey97', '1'='darkblue')) +
-    scale_color_manual(values = c('0'='grey50' , '1'='grey80' )) +
-    scale_size_manual (values = c('0'=0.25    , '1'=0.25      )) +
+    theme_void(base_size = base_size) +
+    scale_fill_manual (values = c('0' = 'grey97' , '1' = 'darkblue')) +
+    scale_color_manual(values = c('0' = 'grey50' , '1' = 'grey80'  )) +
+    scale_size_manual (values = c('0' = 0.25     , '1' = 0.25      )) +
     theme(
       legend.position = 'none',
       plot.title = element_text(hjust = 0.5, size = 15, face = 'bold')
@@ -154,22 +155,3 @@ create_clue_plot <- function(clue, total_length, row_spacing=0.3, ...) {
 
 
 
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# Testing
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-if (FALSE) {
-
-  library(ggplot2)
-  library(purrr)
-  set.seed(2)
-  puzzle = nonogram::puzzle_string_library[1]
-  create_puzzle_plot(puzzle, title="Demo")
-
-  library(ggplot2)
-  set.seed(2)
-  mat <- matrix(sample(0:1, 25, replace = TRUE), nrow=5)
-  create_matrix_plot(mat)
-
-  create_clue_plot(c(1, 1), 5)
-
-}

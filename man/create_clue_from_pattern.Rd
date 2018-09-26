@@ -7,7 +7,7 @@
 create_clue_from_pattern(pattern)
 }
 \arguments{
-\item{pattern}{vectof of 0/1 values}
+\item{pattern}{vector of 0/1 values}
 }
 \value{
 corresponding nonogram clue

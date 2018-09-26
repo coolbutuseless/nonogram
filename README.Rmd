@@ -103,7 +103,7 @@ puzzle <- puzzle_string_examples[['R']]
 puzzle
 
 puzzle %>%
-  solve_puzzle() %>%
+  solve_puzzle(verbose=TRUE) %>%
   create_puzzle_plot(puzzle, ., show_clues=TRUE)
 ```
 

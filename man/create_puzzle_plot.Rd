@@ -5,7 +5,7 @@
 \title{Plot a nonogram puzzle}
 \usage{
 create_puzzle_plot(puzzle, solution_matrix = NULL, show_clues = TRUE,
-  title = NULL, col_spacing = 0, row_spacing = 0)
+  title = NULL, base_size = 11, col_spacing = 0, row_spacing = 0)
 }
 \arguments{
 \item{puzzle}{puzzle object}
@@ -15,6 +15,8 @@ create_puzzle_plot(puzzle, solution_matrix = NULL, show_clues = TRUE,
 \item{show_clues}{whether or not to show the clues along the axes. default: TRUE}
 
 \item{title}{plot title. default: NULL}
+
+\item{base_size}{base size for ggplot theme. default 11}
 
 \item{col_spacing}{fractional extra spacing between columns}
 
