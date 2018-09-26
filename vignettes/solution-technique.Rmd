@@ -1,0 +1,247 @@
+---
+title: "Nonogram solution technique"
+author: "mikefc"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+suppressPackageStartupMessages({
+  library(magrittr)
+  library(tidyverse)
+  library(testthat)
+  
+  library(nonogram)
+})
+
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+
+
+Nonograms Solution Technique
+------------------------------------------------------------------------------
+
+This vignette outlines the solutino technique used in this package.
+
+
+Nomenclature
+------------------------------------------------------------------------------
+
+
+### `clue`
+
+A clue is sequence of integers which are the run-length encoding of the filled-in 
+squares in a row or column. 
+
+E.g. **`1,2`** is a *clue* which means that there is 1 filled-in square in this row
+  (or column) followed by some blank squares, and then two filled-in squares in a row
+  
+### `pattern`
+
+A *pattern* is a sequence of filled-in and blank squares which make up a row or 
+column.  
+
+E.g. the clue `1,2`  (on a board 8 squares wide) is satisfied by each
+of the following patterns, represented as a matrix and shown graphically
+
+```{r echo=FALSE}
+pattern_set <- nonogram::create_pattern_set(c(1, 2), 8)
+pattern_set <- pattern_set[c(1, 5, 11), ]
+
+pattern_set
+
+nonogram::create_matrix_plot(pattern_set, row_spacing = 0.3)
+```
+
+
+### `pattern set`
+
+A *pattern set* is the complete set of all possible patterns which satisfy a clue.
+
+E.g. the pattern set for the clue `2,3` on a board 8 squares wide is shown below
+as a matrix as well as graphically.
+
+```{r echo = FALSE}
+pattern_set <- nonogram::create_pattern_set(c(2, 3), 8)
+pattern_set
+nonogram::create_matrix_plot(pattern_set, row_spacing = 0.3)
+```
+
+
+### `pattern sets`
+
+For each clue along the rows, and each clue along the columns, there is a *pattern set*.
+
+The *row pattern sets* is the collection of the *pattern set*s for every row.
+
+The *column pattern sets* is the collection of the *pattern set*s for every column.
+
+
+### `puzzle`
+
+A puzzle is collection of clues, represented in the `nonogram` package as a list of
+vectors.
+
+E.g. the puzzle for the **duck** image shown at the top is:
+
+```{r eval=FALSE}
+puzzle <- list(
+  row_clues = list(3L, 2:1, 3:2, c(2L, 2L), 6L, c(1L, 5L), 6L, 1L, 2L), 
+  col_clues = list(1:2, c(3L, 1L), c(1L, 5L), c(7L, 1L), 5L, 3L, 4L, 3L)
+)
+```
+
+
+
+### `puzzle string`
+
+For storage and transfer, it's sometimes easier to deal with the puzzle just
+as a string.
+
+A *puzzle string* is a compact string representation of the puzzle.
+
+It consists of:
+
+* the numbers for each clue separated by a comma
+* each clue separated by a colon
+* the row and column clues (in that order) separated by a dash
+
+
+As an example, the following is the puzzle string for the **duck** nonogram
+
+
+
+```{r eval=FALSE}
+"3:2,1:3,2:2,2:6:1,5:6:1:2-1,2:3,1:1,5:7,1:5:3:4:3"
+```
+
+
+
+
+Solution technique
+------------------------------------------------------------------------------
+
+1. For each clue generate its pattern set
+2. Within each pattern set, find if any locations are a constant colour, and 
+   use this fact to elimintate patterns in the other direction
+3. On the remaining (hopefully small) number of choices within each pattern set
+   for each clue, do a recursive search with back-tracking to find a solution
+   
+   
+Solution step 1: Generate all possible patterns for a clue
+------------------------------------------------------------------------------
+
+This was the most difficult part of this solution technique, as the number of 
+possible combinations, and the resulting `pattern set`, can be **huge**.
+
+Most grids in print max out at about 35 squares along each side.  There are plenty
+of larger ones, but I optimised the solver only up to this size.  
+
+For a small puzzle, like the **duck** a the clue in the first column (`1,2`) has
+21 possible patterns I've plotted them below
+
+```{r fig.height=3, echo=FALSE, fig.width=6}
+pattern_set <- create_pattern_set(c(1, 2), 9)
+
+create_matrix_plot(t(pattern_set), col_spacing = 0.45)
+```
+
+
+For the larger `gchq` puzzle below, the clue `1,1,2,1,1,2` to fit in the
+puzzle width of 25 squares has 18,564 patterns, some of which are shown below.
+
+```{r fig.height=3, echo=FALSE, fig.width=6}
+pattern_set <- create_pattern_set(c(1,1,2,1,1,2), 25)
+pattern_set <- pattern_set[c(1, 10, 100, 200, 300, 1000, 10000, 15000),]
+
+create_matrix_plot(pattern_set, row_spacing = 0.4)
+```
+
+
+For a clue of `1,1,2,1,1,2,1,1,1,1` in a puzzle that is 35 squares wide, there 
+are **1,961,256** patterns.
+
+
+In the end, I've settled upon the following solution:
+
+* recursively build the solution
+* with back-tracking whenever a valid pattern is impossible from a particular location
+* store all values as raw matrices (to reduce the memory pressure)
+* have a cache of patterns for smaller clues and puzzle widths rather than recalcualting every time.
+
+
+If I ever revisit this problem, I have an idea for a solution using the 
+[memoise package](https://cran.r-project.org/package=memoise).  But the problem
+with cacheing *everything* is that some of the pattern sets are *HUGE* - more than 
+a gigabyte - and I don't want to cache all those.
+
+If I ever wanted to solve bigger nonograms,
+I'd need to use another solution technique altogether - the up-front generation of all
+possible clues just takes up too much time and memory.
+
+
+Solution step 2: Filter the pattern sets
+------------------------------------------------------------------------------
+
+For very *very* small nonograms, it might be possible to try every combination 
+of patterns in a row and exhaustively search for a solution.
+
+In the **duck** problem the total number of combinations for all patterns for all
+rows is 8x10^6 (8 million).  If you could try 10,000 patterns/sec, you could 
+try them all in about 15 minutes.
+
+For some of the larger nonograms there are more than 1x10^100 (not a typo) combinations to try if you
+wanted to brute force a solution!
+
+To initally filter the set of all patterns into a more tractable solution, I 
+look for locations within each pattern set which can only be one colour and use that to 
+filter the orthogonal data set.
+
+
+E.g. The pattern set for the third row in the **duck** puzzle with clue `3,2` is shown below:
+
+```{r echo=FALSE, fig.height=3}
+puzzle_string_examples[['duck']] %>% convert_puzzle_string_to_puzzle() -> puzzle
+create_pattern_set(puzzle$row_clues[[3]], 8L) %>%
+  create_matrix_plot(row_spacing = 0.3)
+```
+
+The third column is always filled-in! Which means that I now look at the pattern
+sets for the third column and keep only ones with that location filled in.
+
+The clue for the third column is `1,5` which looks like:
+
+```{r echo=FALSE, fig.height=3}
+pattern_set <- create_pattern_set(puzzle$col_clues[[3]], 9L) 
+create_matrix_plot(t(pattern_set), col_spacing = 0.3)
+```
+
+Only two patterns have the required filled-in square in the 3rd row, the others
+can be eliminated from consideration.
+
+This process is repeated until there are no more occurrences.
+
+Sometimes by doing this filtering there is only one possible pattern left for
+each row and column, in which case we have found a solution!
+
+
+Solution step 3: Recursively build the solution by rows with back-tracking 
+------------------------------------------------------------------------------
+
+If there are still multiple patterns to try for each row we now try all of them
+in turn by choosing them one row at a time.
+
+But as each row is selected, a cross-check is done to see that at least one 
+pattern in each column can fit that sequence of rows.
+
+If it fails then we stop that search path, select a different
+row from the pattern set and continue.  
+

@@ -92,16 +92,32 @@ puzzle
 #> [1] "7:13:17:11,7:3,3,3:3,2,10,2:2,2,11,2:3,2,12,1:3,1,4,5,1:3,1,4,4,1:3,1,4,4,1:2,2,11,1:3,2,10,2:6,9,2:11,6:10,5:15:6,5:4,5:4,5-4:8:10:3,3:3,5,3:2,2,5:3,2,5:5,4:4,3:5,4:4,15:4,15:4,15:4,15:3,3,3,2:4,3,3,1:3,3,6:3,4,7:3,15:2,8,6:3,6,6:2,4,1,3:2,1,2:2,2:7"
 
 puzzle %>%
-  create_puzzle_plot()
-```
-
-![](figures/all-in-one-1.png)<!-- -->
-
-``` r
-
-puzzle %>%
   solve_puzzle() %>%
   create_puzzle_plot(puzzle, ., show_clues=TRUE)
 ```
 
-![](figures/all-in-one-2.png)<!-- -->
+![](figures/all-in-one-1.png)<!-- -->
+
+### Create your own puzzles
+
+To make, print and solve your own nonograms, you just need to create a
+*puzzle string*.
+
+The `puzzle string` format used to define puzzles is quite simple:
+
+  - the numbers for each clue are separated by a comma
+  - each clue is separated by a colon
+  - the clues for the rows come first, then a dash, then the clues for
+    the columns
+  - row clues are read from left to right
+  - column clues are read from top to bottom
+
+<!-- end list -->
+
+``` r
+puzzle_string <- "3:1:1,1-3:1:1,1"
+solution      <- solve_puzzle(puzzle_string)
+create_puzzle_plot(puzzle_string, solution)
+```
+
+![](figures/create-your-own-1.png)<!-- -->
