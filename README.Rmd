@@ -1,0 +1,124 @@
+---
+output:
+  md_document:
+    variant: gfm
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, echo = FALSE}
+
+suppressPackageStartupMessages({
+  library(dplyr)
+  library(ggplot2)
+  
+  library(nonogram)
+})
+
+
+
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "figures/"
+)
+```
+
+
+
+
+
+Nonograms
+------------------------------------------------------------------------------
+
+Nonograms are picture logic puzzles in which cells in a grid must be colored or left blank according to numbers at the side of the grid to reveal a hidden picture.
+
+Nonograms are also known by many other names, including Paint by Numbers, Griddlers, Pic-a-Pix, Picross, PrismaPixels, Pixel Puzzles, Crucipixel, Edel, FigurePic, Hanjie, HeroGlyphix, Illust-Logic, Japanese Crosswords, Japanese Puzzles, Kare Karala!, Logic Art, Logic Square, Logicolor, Logik-Puzzles, Logimage, Oekaki Logic, Oekaki-Mate, Paint Logic, Picture Logic, Tsunamii, Paint by Sudoku and Binary Coloring Books.
+
+
+<div style="float: left;">
+  <img src="figures/example-blank.png" width="45%"><img src="figures/example-solved.png" width="45%">
+</div>
+
+
+Installation
+------------------------------------------------------------------------------
+
+You can install `nonogram` from github with:
+
+```{r gh-installation, eval = FALSE}
+# install.packages("devtools")
+devtools::install_github("coolbutuseless/nonogram")
+```
+
+
+Example
+------------------------------------------------------------------------------
+
+This is a basic example which shows you how to plot and solve a simple puzzle.
+
+### Use one of the puzzle strings in the package
+
+```{r example}
+puzzle_string <- puzzle_string_examples[['duck']] 
+puzzle        <- convert_puzzle_string_to_puzzle(puzzle_string)
+```
+
+### Puzzle and Puzzle String representation
+
+```{r echo=FALSE, comment=NA}
+cat('> puzzle_string')
+strwrap(puzzle_string, width = 60) %>% cat
+
+
+cat("\n> puzzle")
+deparse(puzzle) %>% paste(collapse="\n") %>% cat()
+```
+
+### Plot the unsolved puzzle
+
+```{r duck-unsolved}
+create_puzzle_plot(puzzle, title="Duck")
+```
+
+### Solve the puzzle
+
+```{r}
+solution_matrix <- solve_puzzle(puzzle) 
+solution_matrix
+```
+
+
+### Plot the solved puzzle
+
+```{r duck-solution}
+create_puzzle_plot(puzzle, solution_matrix, title="Duck")
+```
+
+
+### An all-in-one example
+
+```{r all-in-one}
+puzzle <- puzzle_string_examples[['R']]
+puzzle
+
+puzzle %>%
+  create_puzzle_plot()
+
+puzzle %>%
+  solve_puzzle() %>%
+  create_puzzle_plot(puzzle, ., show_clues=TRUE)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+

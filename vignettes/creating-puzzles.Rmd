@@ -1,0 +1,93 @@
+---
+title: "Creating a nonogram puzzle from an image"
+author: "mikefc"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+suppressPackageStartupMessages({
+  library(dplyr)
+  library(raster)
+  
+  library(nonogram)
+})
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 7, fig.height=6
+)
+```
+
+
+## Load a small black and white image
+
+
+```{r}
+im <- png::readPNG("figures/Rlogo-bw.png")
+plot(as.raster(im), interpolate=FALSE)
+```
+
+
+## From the image, create an integer matrix with just zeros and ones
+
+
+```{r}
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Manipulating the image data to select just the 'Green' plane from the
+# RGB image, and then thresholding it and inverting it.
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+mat <- 1L - (im[,,2] > 0)
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# nonogram has a method for plotting a matrix in a standard way
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+nonogram::create_matrix_plot(mat)
+```
+
+
+## Create the puzzle from the matrix
+
+Puzzles in `nonogram` are represented in 2 ways:
+
+* `puzzles` - list objects with vectors of clues for each row and each column
+* `puzzle_strings` - compact character representations of the puzzles
+    * a clue for a row is represented by a comma-separated list of integers
+    * multiple clues are separated by a colon `:`
+    * the row clues come first and then the column clues. 
+    * the row and column clues are separated by a `-`
+
+
+```{r}
+puzzle        <- create_puzzle_from_matrix(mat)
+puzzle_string <- convert_puzzle_to_puzzle_string(puzzle)
+```
+
+```{r echo=FALSE, comment=NA}
+cat("> puzzle")
+deparse(puzzle) %>% paste(collapse="\n") %>% cat()
+
+cat('> puzzle_string')
+strwrap(puzzle_string, width = 60) %>% cat
+```
+
+
+## Create a plot of the matrix and clues 
+
+```{r}
+create_puzzle_plot(puzzle, mat, show_clues=TRUE)
+```
+
+
+
+# Create a blank plot of just the clues
+
+```{r}
+create_puzzle_plot(puzzle, show_clues=TRUE)
+```
+
+
