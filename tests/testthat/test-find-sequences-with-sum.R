@@ -21,3 +21,9 @@ test_that("find_integers_with_sum works big", {
   expect_true(all(rowSums(res) == 17))
 
 })
+
+
+test_that("find-integers-with-sum corner case", {
+
+  expect_null(find_integers_with_sum(target_sum = 0, target_length = 1))
+})

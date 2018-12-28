@@ -8,11 +8,13 @@ Description: Tools for solving and manipulating nonogram puzzles.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-Suggests: testthat,
+Suggests: 
+    testthat,
     knitr,
     rmarkdown,
-    magick
-RoxygenNote: 6.0.1
+    magick,
+    covr
+RoxygenNote: 6.1.1
 Depends:
   R (>= 2.10)
 Imports:

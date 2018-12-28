@@ -4,7 +4,8 @@
 \alias{solve_puzzle_core}
 \title{Solve a puzzle by searching recursive with back-tracking and pruning.}
 \usage{
-solve_puzzle_core(row_solution_patterns, col_pattern_sets, row_pattern_sets)
+solve_puzzle_core(row_solution_patterns, col_pattern_sets,
+  row_pattern_sets)
 }
 \arguments{
 \item{row_solution_patterns}{solution so far of row patterns}

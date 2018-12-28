@@ -1,3 +1,6 @@
+^codecov\.yml$
+^\.travis\.yml$
+^appveyor\.yml$
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^working$

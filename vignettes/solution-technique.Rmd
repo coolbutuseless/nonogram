@@ -171,7 +171,7 @@ In the end, I've settled upon the following solution:
 
 * recursively build the solution
 * with back-tracking whenever a valid pattern is impossible from a particular location
-* store all values as raw matrices (to reduce the memory pressure)
+* store all values as lists of matrices which allowed for fast filtering out of impossible pattern combinations
 * have a cache of patterns for smaller clues and puzzle widths rather than recalcualting every time.
 
 

@@ -1,6 +1,14 @@
+
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 ## Nonograms
+
+[![AppVeyor build
+status](https://ci.appveyor.com/api/projects/status/github/coolbutuseless/nonogram?branch=master&svg=true)](https://ci.appveyor.com/project/coolbutuseless/nonogram)
+[![Travis build
+status](https://travis-ci.org/coolbutuseless/nonogram.svg?branch=master)](https://travis-ci.org/coolbutuseless/nonogram)
+[![Coverage
+status](https://codecov.io/gh/coolbutuseless/nonogram/branch/master/graph/badge.svg)](https://codecov.io/github/coolbutuseless/nonogram?branch=master)
 
 Nonograms are picture logic puzzles in which cells in a grid must be
 colored or left blank according to numbers at the side of the grid to
