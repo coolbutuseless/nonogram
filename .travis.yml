@@ -3,6 +3,8 @@
 language: R
 sudo: false
 cache: packages
+r_build_args: '--no-build-vignettes'
+env: _R_CHECK_FORCE_SUGGESTS_=0
 
 after_success:
   - Rscript -e 'covr::codecov()'
