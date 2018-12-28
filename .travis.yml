@@ -4,7 +4,9 @@ language: R
 sudo: false
 cache: packages
 r_build_args: '--no-build-vignettes'
-env: _R_CHECK_FORCE_SUGGESTS_=0
+env:
+  global:
+    - _R_CHECK_FORCE_SUGGESTS_="0"
 warnings_are_errors: true
 
 after_success:
