@@ -12,6 +12,7 @@ Suggests:
     testthat,
     knitr,
     rmarkdown,
+    jpeg,
     magick,
     covr
 RoxygenNote: 6.1.1
