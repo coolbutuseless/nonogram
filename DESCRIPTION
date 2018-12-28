@@ -21,5 +21,6 @@ Imports:
   methods,
   ggplot2,
   dplyr,
-  purrr
+  purrr,
+  memoise
 VignetteBuilder: knitr
